@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'homepage.dart';
+import 'product_description.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +18,11 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
       debugShowCheckedModeBanner: false,
-      home: Homepage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => HomePage(),
+        '/productdescription': (context) => ProductDescriptionPage(),
+      },
     );
   }
 }
