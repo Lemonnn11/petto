@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _SideBarState extends State<SideBar> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
+      width: 230,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -56,21 +58,29 @@ class _SideBarState extends State<SideBar> {
                   }
                 }),
           ),
-          ListTile(
-            title: GestureDetector(
-              onTap: () {
-                Navigator.pushNamed(context, '/login');
-              },
-              child: Text('Sign In'),
-            ),
+          SizedBox(
+            height: 20,
           ),
-          ListTile(
-            title: GestureDetector(
-              onTap: () {
-                _auth.signOut();
-                Navigator.pushNamed(context, '/');
-              },
-              child: Text('Sign Out'),
+          GestureDetector(
+            onTap: () {
+              _auth.signOut();
+              Navigator.pushNamed(context, '/login');
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 40,
+                ),
+                Icon(
+                  Icons.logout_outlined,
+                  color: Colors.grey[600],
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Text('Sign Out'),
+              ],
             ),
           ),
         ],

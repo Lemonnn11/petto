@@ -1,4 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'reusable_small_card.dart';
@@ -19,6 +19,21 @@ class _HomePageState extends State<HomePage> {
   double yOffset = 0;
   double scaleFactor = 1;
   bool isSideBarOpen = false;
+  final _firestore = FirebaseFirestore.instance;
+
+  void initState() {
+    super.initState();
+    getPetsInfo();
+  }
+
+  void getPetsInfo() async {
+    await for (var snapshot in _firestore.collection('pets').snapshots()) {
+      for (var pet in snapshot.docs) {
+        print(pet.data());
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
