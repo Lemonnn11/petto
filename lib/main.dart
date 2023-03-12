@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
-import 'homepage.dart';
 import 'product_description.dart';
+import 'registration.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:petto/sign_in.dart';
+import 'home.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
@@ -20,7 +25,9 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(),
+        '/': (context) => Home(),
+        '/registration': (context) => Registration(),
+        '/login': (context) => Login(),
         '/productdescription': (context) => ProductDescriptionPage(),
       },
     );

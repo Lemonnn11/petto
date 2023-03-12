@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 
 class ReusableBigCard extends StatelessWidget {
+  final String imagePath;
+  final double imageHeight;
+  final double imageWidth;
+
+  ReusableBigCard(
+      {required this.imagePath,
+      required this.imageHeight,
+      required this.imageWidth});
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -19,18 +28,28 @@ class ReusableBigCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(15),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(9),
+            padding: const EdgeInsets.only(left: 9, right: 9, bottom: 9),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Stack(
                   children: [
                     Container(
+                      margin: EdgeInsets.only(top: 9),
                       width: 155,
                       height: 115,
                       decoration: BoxDecoration(
                         color: kYellowColor,
                         borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    Positioned(
+                      top: -78,
+                      left: -65,
+                      child: Container(
+                        width: imageWidth,
+                        height: imageHeight,
+                        child: Image.asset(imagePath),
                       ),
                     ),
                   ],
