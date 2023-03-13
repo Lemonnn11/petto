@@ -36,6 +36,7 @@ class _HomePageState extends State<HomePage> {
       final user = await _auth.currentUser;
       if (user != null) {
         loggedInUser = user;
+        print(loggedInUser?.email);
         return loggedInUser?.email;
       }
     } catch (e) {
@@ -60,7 +61,6 @@ class _HomePageState extends State<HomePage> {
         petsInfo['Location'] = petData['Location'].toString();
         _petsList.add(petsInfo!);
       }
-      print(_petsList);
     }
   }
 
@@ -72,6 +72,7 @@ class _HomePageState extends State<HomePage> {
         final userName = userData['name'];
         usersInfo![userEmail.toString()] = userName.toString();
       }
+      print(usersInfo);
     }
   }
 
@@ -157,10 +158,7 @@ class _HomePageState extends State<HomePage> {
                                             builder: (BuildContext context,
                                                 AsyncSnapshot<String?>
                                                     snapshot) {
-                                              if (snapshot.hasError) {
-                                                return Text(
-                                                    snapshot.error.toString());
-                                              } else if (snapshot.hasData) {
+                                              if (snapshot.hasData) {
                                                 loggedInUser =
                                                     _auth.currentUser;
                                                 return Text(
@@ -169,6 +167,9 @@ class _HomePageState extends State<HomePage> {
                                                   style:
                                                       TextStyle(fontSize: 18),
                                                 );
+                                              } else if (snapshot.hasError) {
+                                                return Text(
+                                                    snapshot.error.toString());
                                               } else {
                                                 return Text('Loading...');
                                               }
@@ -273,10 +274,7 @@ class _HomePageState extends State<HomePage> {
                                             builder: (BuildContext context,
                                                 AsyncSnapshot<String?>
                                                     snapshot) {
-                                              if (snapshot.hasError) {
-                                                return Text(
-                                                    snapshot.error.toString());
-                                              } else if (snapshot.hasData) {
+                                              if (snapshot.hasData) {
                                                 loggedInUser =
                                                     _auth.currentUser;
                                                 return Text(
@@ -285,6 +283,9 @@ class _HomePageState extends State<HomePage> {
                                                   style:
                                                       TextStyle(fontSize: 18),
                                                 );
+                                              } else if (snapshot.hasError) {
+                                                return Text(
+                                                    snapshot.error.toString());
                                               } else {
                                                 return Text('Loading...');
                                               }

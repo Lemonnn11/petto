@@ -70,6 +70,7 @@ class _SideBarState extends State<SideBar> {
                   builder:
                       (BuildContext context, AsyncSnapshot<String?> snapshot) {
                     if (snapshot.hasData) {
+                      loggedInUser = _auth.currentUser;
                       return Text(
                         usersInfo?[snapshot.data!] ?? '',
                         style: TextStyle(fontSize: 18),
@@ -77,7 +78,12 @@ class _SideBarState extends State<SideBar> {
                     } else if (snapshot.hasError) {
                       return Text(snapshot.error.toString());
                     } else {
-                      return Text('Loading...');
+                      return GestureDetector(
+                        child: Text('Sign In'),
+                        onTap: () {
+                          Navigator.pushNamed(context, '/login');
+                        },
+                      );
                     }
                   }),
               subtitle: FutureBuilder<String?>(
@@ -116,7 +122,7 @@ class _SideBarState extends State<SideBar> {
             GestureDetector(
               onTap: () {
                 _auth.signOut();
-                Navigator.pushNamed(context, '/login');
+                Navigator.pushNamed(context, '/home');
               },
               child: ReusableSideBarTab(
                 icon: Icons.logout_outlined,

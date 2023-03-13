@@ -51,7 +51,7 @@ class _LoginState extends State<Login> {
               try {
                 final user = await _auth.signInWithEmailAndPassword(
                     email: email, password: password);
-                // print(user);
+                print(user);
                 if (user != null) {
                   Navigator.pushNamed(context, '/home');
                 }
