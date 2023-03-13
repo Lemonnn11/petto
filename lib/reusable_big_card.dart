@@ -3,13 +3,15 @@ import 'constants.dart';
 
 class ReusableBigCard extends StatelessWidget {
   final String imagePath;
-  final double imageHeight;
-  final double imageWidth;
+  final String name;
+  final String location;
+  final String price;
 
   ReusableBigCard(
       {required this.imagePath,
-      required this.imageHeight,
-      required this.imageWidth});
+      required this.name,
+      required this.location,
+      required this.price});
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +49,8 @@ class ReusableBigCard extends StatelessWidget {
                       top: -78,
                       left: -65,
                       child: Container(
-                        width: imageWidth,
-                        height: imageHeight,
+                        width: 280,
+                        height: 280,
                         child: Image.asset(imagePath),
                       ),
                     ),
@@ -57,14 +59,14 @@ class ReusableBigCard extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(left: 7, top: 5),
                   child: Text(
-                    'Martin',
+                    name,
                     style: kTextCardNameStyle,
                   ),
                 ),
                 Container(
                   margin: EdgeInsets.only(left: 7),
                   child: Text(
-                    '(Nonthaburi, 26 km)',
+                    location,
                     style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
                   ),
                 ),
@@ -73,7 +75,7 @@ class ReusableBigCard extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        '85\$',
+                        '${price}\$',
                         style: TextStyle(
                             color: Color(0xff17A589),
                             fontWeight: FontWeight.bold),

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'reusable_small_card.dart';
@@ -6,10 +7,9 @@ import 'constants.dart';
 import 'reusable_big_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'reusable_bottom_icon.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -20,16 +20,57 @@ class _HomePageState extends State<HomePage> {
   double scaleFactor = 1;
   bool isSideBarOpen = false;
   final _firestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+  User? loggedInUser;
+  Map<String, String> usersInfo = {};
+  List<Map<String, String>> _petsList = [];
 
   void initState() {
     super.initState();
-    getPetsInfo();
+    _getPetsInfo();
+    _getUsersInfo();
   }
 
-  void getPetsInfo() async {
+  Future<String?> _getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  void _getPetsInfo() async {
+    int i = 0;
     await for (var snapshot in _firestore.collection('pets').snapshots()) {
       for (var pet in snapshot.docs) {
-        print(pet.data());
+        final petData = pet.data();
+        Map<String, String>? petsInfo = {};
+        petsInfo['Name'] = petData['Name'].toString();
+        petsInfo['About'] = petData['About'].toString();
+        petsInfo['Sex'] = petData['Sex'].toString();
+        petsInfo['Age'] = petData['Age'].toString();
+        petsInfo['Weight'] = petData['Weight'].toString();
+        petsInfo['Price'] = petData['Price'].toString();
+        petsInfo['Owner'] = petData['Owner'].toString();
+        petsInfo['Location'] = petData['Location'].toString();
+        _petsList.add(petsInfo!);
+      }
+      print(_petsList);
+    }
+  }
+
+  void _getUsersInfo() async {
+    await for (var snapshot in _firestore.collection('users').snapshots()) {
+      for (var user in snapshot.docs) {
+        final userData = user.data();
+        final userEmail = userData['email'];
+        final userName = userData['name'];
+        usersInfo![userEmail.toString()] = userName.toString();
       }
     }
   }
@@ -111,11 +152,27 @@ class _HomePageState extends State<HomePage> {
                                       ),
                                       Row(
                                         children: [
-                                          Text(
-                                            'Pannavich',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                            ),
+                                          FutureBuilder<String?>(
+                                            future: _getCurrentUser(),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<String?>
+                                                    snapshot) {
+                                              if (snapshot.hasError) {
+                                                return Text(
+                                                    snapshot.error.toString());
+                                              } else if (snapshot.hasData) {
+                                                loggedInUser =
+                                                    _auth.currentUser;
+                                                return Text(
+                                                  usersInfo?[snapshot.data!] ??
+                                                      '',
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                );
+                                              } else {
+                                                return Text('Loading...');
+                                              }
+                                            },
                                           ),
                                           SizedBox(
                                             width: 3,
@@ -179,7 +236,7 @@ class _HomePageState extends State<HomePage> {
                                       GestureDetector(
                                         onTap: () {
                                           setState(() {
-                                            xOffset = 230;
+                                            xOffset = 260;
                                             isSideBarOpen = true;
                                           });
                                         },
@@ -205,17 +262,33 @@ class _HomePageState extends State<HomePage> {
                                       Text(
                                         'Welcome Back!',
                                         style: TextStyle(
-                                          fontSize: 14,
+                                          fontSize: 15.5,
                                           color: Colors.grey[700],
                                         ),
                                       ),
                                       Row(
                                         children: [
-                                          Text(
-                                            'Pannavich',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                            ),
+                                          FutureBuilder<String?>(
+                                            future: _getCurrentUser(),
+                                            builder: (BuildContext context,
+                                                AsyncSnapshot<String?>
+                                                    snapshot) {
+                                              if (snapshot.hasError) {
+                                                return Text(
+                                                    snapshot.error.toString());
+                                              } else if (snapshot.hasData) {
+                                                loggedInUser =
+                                                    _auth.currentUser;
+                                                return Text(
+                                                  usersInfo?[snapshot.data!] ??
+                                                      '',
+                                                  style:
+                                                      TextStyle(fontSize: 18),
+                                                );
+                                              } else {
+                                                return Text('Loading...');
+                                              }
+                                            },
                                           ),
                                           SizedBox(
                                             width: 3,
@@ -493,7 +566,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                     SizedBox(
-                      height: 3,
+                      height: 5,
                     ),
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.baseline,
@@ -521,10 +594,14 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
+                    SizedBox(
+                      height: 7,
+                    ),
                   ],
                 ),
               ),
               Container(
+                height: 220,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
                     Color(0x6688CFFF),
@@ -534,37 +611,35 @@ class _HomePageState extends State<HomePage> {
                     Colors.white,
                   ], begin: Alignment.topLeft, end: Alignment.bottomRight),
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Container(
-                        height: 220,
-                        margin: EdgeInsets.only(left: 12, right: 12),
-                        child: ListView(
-                          scrollDirection: Axis.horizontal,
-                          children: [
-                            SizedBox(
-                              width: 4,
-                            ),
-                            ReusableBigCard(
-                              imagePath: 'images/dog1.png',
-                              imageHeight: 280,
-                              imageWidth: 280,
-                            ),
-                            ReusableBigCard(
-                              imagePath: 'images/dog2.png',
-                              imageHeight: 280,
-                              imageWidth: 280,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                // child: SingleChildScrollView(
+                //   child: Column(
+                //     children: [
+                // SizedBox(
+                //   height: 10,
+                // ),
+                // Container(
+                //   height: 220,
+                // margin: EdgeInsets.only(left: 12, right: 12),
+                // child:
+                child: Container(
+                  margin: EdgeInsets.only(left: 16, right: 12),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _petsList.length,
+                    itemBuilder: (_, index) {
+                      return ReusableBigCard(
+                        imagePath: 'images/dog1.png',
+                        name: _petsList[index]['Name'].toString(),
+                        location: _petsList[index]['Location'].toString(),
+                        price: _petsList[index]['Price'].toString(),
+                      );
+                    },
                   ),
                 ),
+                // ),
+                //     ],
+                //   ),
+                // ),
               ),
             ],
           ),
