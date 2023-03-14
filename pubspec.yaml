@@ -42,6 +42,7 @@ dependencies:
   firebase_auth: ^4.2.10
   cloud_firestore: ^4.4.4
   modal_progress_hud: ^0.1.3
+  flutter_driver: ^0.0.1
 
 dev_dependencies:
   flutter_test:
