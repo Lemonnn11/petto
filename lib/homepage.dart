@@ -667,7 +667,7 @@ class _HomePageState extends State<HomePage> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pushNamed(context, '/');
+                          Navigator.pushNamed(context, '/home');
                         },
                         child: BottomIcon(
                           icon: Ionicons.home_outline,
