@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Poppins',
       ),
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home',
+      initialRoute: '/login',
       routes: {
         '/home': (context) => Home(),
         '/registration': (context) => Registration(),

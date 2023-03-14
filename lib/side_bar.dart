@@ -25,10 +25,12 @@ class _SideBarState extends State<SideBar> {
   void _getUsersInfo() async {
     await for (var snapshot in _firestore.collection('users').snapshots()) {
       for (var user in snapshot.docs) {
-        final userData = user.data();
-        final userEmail = userData['email'];
-        final userName = userData['name'];
-        usersInfo![userEmail.toString()] = userName.toString();
+        setState(() {
+          final userData = user.data();
+          final userEmail = userData['email'];
+          final userName = userData['name'];
+          usersInfo![userEmail.toString()] = userName.toString();
+        });
       }
     }
   }
