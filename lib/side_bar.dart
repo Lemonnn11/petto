@@ -124,7 +124,7 @@ class _SideBarState extends State<SideBar> {
             GestureDetector(
               onTap: () {
                 _auth.signOut();
-                Navigator.pushNamed(context, '/home');
+                Navigator.pushNamed(context, '/login');
               },
               child: ReusableSideBarTab(
                 icon: Icons.logout_outlined,
