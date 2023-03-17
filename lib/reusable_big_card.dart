@@ -17,7 +17,7 @@ class ReusableBigCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, '/productdescription');
+        Navigator.push(context, MaterialPageRoute(builder: (context) => pro,),),
       },
       child: Container(
         margin: EdgeInsets.only(

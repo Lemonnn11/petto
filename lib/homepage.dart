@@ -319,18 +319,18 @@ class _HomePageState extends State<HomePage> {
                                     height: 6,
                                   ),
                                   Container(
-                                    width: 70,
+                                    width: 76,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          height: 26,
+                                          height: 28,
                                           child: Image.asset(
                                               'icons/shopping-cart.png'),
                                         ),
                                         Container(
-                                          height: 26,
+                                          height: 28,
                                           child:
                                               Image.asset('icons/search.png'),
                                         ),

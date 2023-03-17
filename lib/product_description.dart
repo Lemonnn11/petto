@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'constants.dart';
 
 class ProductDescriptionPage extends StatelessWidget {
   @override
@@ -15,212 +17,137 @@ class ProductDescriptionpage extends StatefulWidget {
 }
 
 class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
-  double xOffset = 0;
-  double yOffset = 0;
-  double scaleFactor = 1;
-  bool isSideBarOpen = false;
+  List<Map<String, String>> _petsList = [];
+  final _firestore = FirebaseFirestore.instance;
+
+  void initState() {
+    super.initState();
+    _getPetsInfo();
+  }
+
+  void _getPetsInfo() async {
+    int i = 0;
+    await for (var snapshot in _firestore.collection('pets').snapshots()) {
+      for (var pet in snapshot.docs) {
+        final petData = pet.data();
+        Map<String, String>? petsInfo = {};
+        petsInfo['Name'] = petData['Name'].toString();
+        petsInfo['About'] = petData['About'].toString();
+        petsInfo['Sex'] = petData['Sex'].toString();
+        petsInfo['Age'] = petData['Age'].toString();
+        petsInfo['Weight'] = petData['Weight'].toString();
+        petsInfo['Price'] = petData['Price'].toString();
+        petsInfo['Owner'] = petData['Owner'].toString();
+        petsInfo['Location'] = petData['Location'].toString();
+        _petsList.add(petsInfo!);
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedContainer(
-      transform: Matrix4.translationValues(xOffset, yOffset, 0)
-        ..scale(scaleFactor),
-      duration: Duration(milliseconds: 250),
-      child: Scaffold(
-        body: ListView(
-          children: [
-            isSideBarOpen
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    return Scaffold(
+      body: ListView(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              // SizedBox(
+              //   width: 25,
+              // ),
+              Row(
+                children: [
+                  Column(
                     children: [
-                      // SizedBox(
-                      //   width: 25,
-                      // ),
-                      Row(
-                        children: [
-                          Column(
-                            children: [
-                              Container(
-                                  height: 19,
-                                  child: IconButton(
-                                    icon:
-                                        Icon(Icons.arrow_back_ios_new_outlined),
-                                    onPressed: () {
-                                      setState(() {
-                                        xOffset = 0;
-                                        yOffset = 0;
-                                        isSideBarOpen = false;
-                                      });
-                                    },
-                                  )),
-                            ],
-                          ),
-                          SizedBox(
-                            width: 22,
-                          ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Welcome Back!',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Pannavich',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Container(
-                                    height: 18,
-                                    child: Image.asset(
-                                      'icons/waving-hand.png',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
                       SizedBox(
-                        width: 0,
+                        height: 20,
                       ),
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 6,
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            Navigator.pop(context);
+                          });
+                        },
+                        child: CircleAvatar(
+                          child: Icon(
+                            Icons.arrow_back_ios_new_outlined,
+                            size: 18,
+                            color: Colors.white,
                           ),
-                          Container(
-                            width: 81,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  height: 26,
-                                  child: Image.asset('icons/shopping-cart.png'),
-                                ),
-                                SizedBox(
-                                  width: 7,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      xOffset = 230;
-                                      isSideBarOpen = true;
-                                    });
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage('images/pup.png'),
-                                    backgroundColor: Colors.grey[300],
-                                    radius: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  )
-                : Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      // SizedBox(
-                      //   width: 25,
-                      // ),
-                      Row(
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 20,
-                              ),
-                              Text(
-                                'Welcome Back!',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey[700],
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Text(
-                                    'Pannavich',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 3,
-                                  ),
-                                  Container(
-                                    height: 18,
-                                    child: Image.asset(
-                                      'icons/waving-hand.png',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        width: 0,
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 6,
-                          ),
-                          Container(
-                            width: 81,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  height: 26,
-                                  child: Image.asset('icons/shopping-cart.png'),
-                                ),
-                                SizedBox(
-                                  width: 7,
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      xOffset = 230;
-                                    });
-                                  },
-                                  child: CircleAvatar(
-                                    backgroundImage:
-                                        AssetImage('images/pup.png'),
-                                    backgroundColor: Colors.grey[300],
-                                    radius: 20,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                          backgroundColor: kPurpleColor,
+                          radius: 19,
+                        ),
                       ),
                     ],
                   ),
-          ],
-        ),
+                ],
+              ),
+              SizedBox(
+                width: 20,
+              ),
+              Column(
+                children: [
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Container(
+                    width: 100,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 28,
+                          child: Image.asset('icons/shopping-cart.png'),
+                        ),
+                        CircleAvatar(
+                          backgroundImage: AssetImage('images/pup.png'),
+                          backgroundColor: Colors.grey[300],
+                          radius: 25,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 28.0),
+            child: Column(
+              children: [
+                Stack(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.only(
+                        top: 40,
+                      ),
+                      width: 380,
+                      height: 189,
+                      decoration: BoxDecoration(
+                        color: kYellowColor,
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                    Positioned(
+                      top: -30,
+                      left: 20,
+                      child: Container(
+                        width: 290,
+                        height: 290,
+                        child: Image(
+                          image: AssetImage(
+                            'images/dog2.png',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
