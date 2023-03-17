@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:petto/sign_in.dart';
 import 'reusable_side_bar_tab.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -18,10 +17,12 @@ class _SideBarState extends State<SideBar> {
   final _firestore = FirebaseFirestore.instance;
   Map<String, String>? usersInfo = {};
   final GoogleSignIn googleSignIn = GoogleSignIn();
+  bool checkType = false;
 
   void initState() {
     super.initState();
     _getUsersInfo();
+    _checkLoggedInType();
   }
 
   void _getUsersInfo() async {
@@ -38,30 +39,30 @@ class _SideBarState extends State<SideBar> {
   }
 
   Future<String?> _getCurrentUser() async {
-    bool? isTypeGoogle = await checkLoggedInType();
-    if (isTypeGoogle!) {
-      try {
-        final user = await _auth.currentUser;
-        if (user != null) {
-          loggedInUser = user;
-          return loggedInUser?.email;
-        }
-      } catch (e) {
-        print(e);
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
       }
-      return null;
-    } else {
-      try {
-        final user = await _auth.currentUser;
-        if (user != null) {
-          loggedInUser = user;
-          return loggedInUser?.displayName;
-        }
-      } catch (e) {
-        print(e);
-      }
-      return null;
+    } catch (e) {
+      print(e);
     }
+    return null;
+  }
+
+  Future<String?> _getCurrentUserDisplayName() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        List<UserInfo>? userInfo = loggedInUser?.providerData;
+        return userInfo?.elementAt(0).displayName;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 
   Future<String?> _getCurrentUserProviderID() async {
@@ -78,15 +79,14 @@ class _SideBarState extends State<SideBar> {
     return null;
   }
 
-  Future<bool?> checkLoggedInType() async {
+  Future<void> _checkLoggedInType() async {
     String? providerID = await _getCurrentUserProviderID();
     try {
       if (providerID == 'google.com') {
         print('google');
-        return true;
-      } else {
-        print('normal');
-        return false;
+        setState(() {
+          checkType = true;
+        });
       }
     } catch (e) {
       print(e);
@@ -112,7 +112,49 @@ class _SideBarState extends State<SideBar> {
                 backgroundColor: Colors.grey[300],
                 radius: 25,
               ),
-              title: await checkLoggedInType() ? : ,
+              title: checkType
+                  ? FutureBuilder<String?>(
+                      future: _getCurrentUserDisplayName(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String?> snapshot) {
+                        if (snapshot.hasData) {
+                          loggedInUser = _auth.currentUser;
+                          return Text(
+                            snapshot.data! ?? '',
+                            style: TextStyle(fontSize: 18),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text(snapshot.error.toString());
+                        } else {
+                          return GestureDetector(
+                            child: Text('Sign In'),
+                            onTap: () {
+                              Navigator.pushNamed(context, '/login');
+                            },
+                          );
+                        }
+                      })
+                  : FutureBuilder<String?>(
+                      future: _getCurrentUser(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<String?> snapshot) {
+                        if (snapshot.hasData) {
+                          loggedInUser = _auth.currentUser;
+                          return Text(
+                            usersInfo?[snapshot.data!] ?? '',
+                            style: TextStyle(fontSize: 18),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text(snapshot.error.toString());
+                        } else {
+                          return GestureDetector(
+                            child: Text('Sign In'),
+                            onTap: () {
+                              Navigator.pushNamed(context, '/login');
+                            },
+                          );
+                        }
+                      }),
               subtitle: FutureBuilder<String?>(
                   future: _getCurrentUser(),
                   builder:
@@ -120,7 +162,7 @@ class _SideBarState extends State<SideBar> {
                     if (snapshot.hasData) {
                       return Text(
                         snapshot.data!,
-                        style: TextStyle(fontSize: 16),
+                        style: TextStyle(fontSize: 15),
                       );
                     } else if (snapshot.hasError) {
                       return Text(snapshot.error.toString());
@@ -148,8 +190,7 @@ class _SideBarState extends State<SideBar> {
             ),
             GestureDetector(
               onTap: () async {
-                bool? isTypeGoogle = await checkLoggedInType();
-                if (isTypeGoogle!) {
+                if (checkType!) {
                   await googleSignIn.signOut();
                 } else {
                   await _auth.signOut();

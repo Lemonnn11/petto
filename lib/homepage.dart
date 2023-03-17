@@ -8,6 +8,7 @@ import 'reusable_big_card.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'reusable_bottom_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -24,6 +25,8 @@ class _HomePageState extends State<HomePage> {
   User? loggedInUser;
   Map<String, String> usersInfo = {};
   List<Map<String, String>> _petsList = [];
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  bool checkType = false;
 
   void initState() {
     super.initState();
