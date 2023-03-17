@@ -74,7 +74,6 @@ class _HomePageState extends State<HomePage> {
           usersInfo![userEmail.toString()] = userName.toString();
         });
       }
-      print(usersInfo);
     }
   }
 

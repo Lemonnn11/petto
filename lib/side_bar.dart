@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:petto/sign_in.dart';
 import 'reusable_side_bar_tab.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({Key? key}) : super(key: key);
@@ -16,6 +17,7 @@ class _SideBarState extends State<SideBar> {
   User? loggedInUser;
   final _firestore = FirebaseFirestore.instance;
   Map<String, String>? usersInfo = {};
+  final GoogleSignIn googleSignIn = GoogleSignIn();
 
   void initState() {
     super.initState();
@@ -36,16 +38,59 @@ class _SideBarState extends State<SideBar> {
   }
 
   Future<String?> _getCurrentUser() async {
+    bool? isTypeGoogle = await checkLoggedInType();
+    if (isTypeGoogle!) {
+      try {
+        final user = await _auth.currentUser;
+        if (user != null) {
+          loggedInUser = user;
+          return loggedInUser?.email;
+        }
+      } catch (e) {
+        print(e);
+      }
+      return null;
+    } else {
+      try {
+        final user = await _auth.currentUser;
+        if (user != null) {
+          loggedInUser = user;
+          return loggedInUser?.displayName;
+        }
+      } catch (e) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
+  Future<String?> _getCurrentUserProviderID() async {
     try {
       final user = await _auth.currentUser;
       if (user != null) {
         loggedInUser = user;
-        return loggedInUser?.email;
+        List<UserInfo>? userInfo = loggedInUser?.providerData;
+        return userInfo?.elementAt(0).providerId;
       }
     } catch (e) {
       print(e);
     }
     return null;
+  }
+
+  Future<bool?> checkLoggedInType() async {
+    String? providerID = await _getCurrentUserProviderID();
+    try {
+      if (providerID == 'google.com') {
+        print('google');
+        return true;
+      } else {
+        print('normal');
+        return false;
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
@@ -67,27 +112,7 @@ class _SideBarState extends State<SideBar> {
                 backgroundColor: Colors.grey[300],
                 radius: 25,
               ),
-              title: FutureBuilder<String?>(
-                  future: _getCurrentUser(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<String?> snapshot) {
-                    if (snapshot.hasData) {
-                      loggedInUser = _auth.currentUser;
-                      return Text(
-                        usersInfo?[snapshot.data!] ?? '',
-                        style: TextStyle(fontSize: 18),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text(snapshot.error.toString());
-                    } else {
-                      return GestureDetector(
-                        child: Text('Sign In'),
-                        onTap: () {
-                          Navigator.pushNamed(context, '/login');
-                        },
-                      );
-                    }
-                  }),
+              title: await checkLoggedInType() ? : ,
               subtitle: FutureBuilder<String?>(
                   future: _getCurrentUser(),
                   builder:
@@ -122,8 +147,13 @@ class _SideBarState extends State<SideBar> {
               height: 30,
             ),
             GestureDetector(
-              onTap: () {
-                _auth.signOut();
+              onTap: () async {
+                bool? isTypeGoogle = await checkLoggedInType();
+                if (isTypeGoogle!) {
+                  await googleSignIn.signOut();
+                } else {
+                  await _auth.signOut();
+                }
                 Navigator.pushNamed(context, '/login');
               },
               child: ReusableSideBarTab(
