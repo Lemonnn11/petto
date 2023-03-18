@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
+import 'package:ionicons/ionicons.dart';
 
 class ProductDescriptionpage extends StatefulWidget {
   String? name;
@@ -215,7 +216,11 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                     children: [
                       Text(
                         'view location',
-                        style: TextStyle(fontSize: 17),
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.grey[700],
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ],
                   ),
@@ -386,7 +391,7 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                                   ''),
                               style: TextStyle(
                                   color: Color(0xff282828),
-                                  fontSize: 16,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold),
                             );
                           } else if (snapshot.hasError) {
@@ -399,25 +404,191 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                     ],
                   ),
                 ),
-                FutureBuilder<int?>(
-                  future: _findPetsListIndex(),
-                  builder:
-                      (BuildContext context, AsyncSnapshot<int?> snapshot) {
-                    if (snapshot.hasData) {
-                      return Text(
-                        (_petsList[snapshot.data!]['Age'].toString() ?? '') +
-                            ' months',
-                        style: TextStyle(
+                Padding(
+                  padding: const EdgeInsets.only(left: 12.0, top: 3),
+                  child: FutureBuilder<int?>(
+                    future: _findPetsListIndex(),
+                    builder:
+                        (BuildContext context, AsyncSnapshot<int?> snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                          (_petsList[snapshot.data!]['About'].toString() ?? ''),
+                          style: TextStyle(
                             color: Color(0xff282828),
                             fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text(snapshot.error.toString());
-                    } else {
-                      return Text('Loading...');
-                    }
-                  },
+                          ),
+                        );
+                      } else if (snapshot.hasError) {
+                        return Text(snapshot.error.toString());
+                      } else {
+                        return Text('Loading...');
+                      }
+                    },
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 14.0, top: 6),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Previous Owner',
+                        style: TextStyle(
+                          color: Color(0xff282828),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: 114,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: kPurpleColor,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            width: 230,
+                            child: Row(
+                              children: [
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: kYellowColor,
+                                  backgroundImage:
+                                      AssetImage('images/owner1.png'),
+                                ),
+                                SizedBox(
+                                  width: 13,
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      height: 6,
+                                    ),
+                                    FutureBuilder<int?>(
+                                      future: _findPetsListIndex(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<int?> snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                            (_petsList[snapshot.data!]['Owner']
+                                                    .toString() ??
+                                                ''),
+                                            style: TextStyle(
+                                                color: Color(0xff36454F),
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              snapshot.error.toString());
+                                        } else {
+                                          return Text('Loading...');
+                                        }
+                                      },
+                                    ),
+                                    FutureBuilder<int?>(
+                                      future: _findPetsListIndex(),
+                                      builder: (BuildContext context,
+                                          AsyncSnapshot<int?> snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Text(
+                                            (_petsList[snapshot.data!]
+                                                        ['Location']
+                                                    .toString() ??
+                                                ''),
+                                            style: TextStyle(
+                                              color: Color(0xff36454F),
+                                              fontSize: 13,
+                                            ),
+                                          );
+                                        } else if (snapshot.hasError) {
+                                          return Text(
+                                              snapshot.error.toString());
+                                        } else {
+                                          return Text('Loading...');
+                                        }
+                                      },
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.star_rounded,
+                                          color: kYellowColor,
+                                        ),
+                                        Icon(
+                                          Icons.star_rounded,
+                                          color: kYellowColor,
+                                        ),
+                                        Icon(
+                                          Icons.star_rounded,
+                                          color: kYellowColor,
+                                        ),
+                                        Icon(
+                                          Icons.star_rounded,
+                                          color: kYellowColor,
+                                        ),
+                                        Icon(
+                                          Icons.star_rounded,
+                                          color: kYellowColor,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            width: 55,
+                            height: 55,
+                            decoration: BoxDecoration(
+                              color: kPurpleColor,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Ionicons.chatbubble_ellipses_outline,
+                              color: Colors.white,
+                              size: 26,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 13.0, bottom: 31),
+                  child: Container(
+                    height: 66,
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: kPurpleColor,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'Adopt Me',
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),
