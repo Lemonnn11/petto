@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:petto/product_description.dart';
 import 'constants.dart';
 
 class ReusableBigCard extends StatelessWidget {
@@ -17,7 +18,12 @@ class ReusableBigCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => pro,),),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductDescriptionpage(name: name),
+          ),
+        );
       },
       child: Container(
         margin: EdgeInsets.only(

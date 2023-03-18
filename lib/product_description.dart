@@ -2,15 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart';
 
-class ProductDescriptionPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const ProductDescriptionpage();
-  }
-}
-
 class ProductDescriptionpage extends StatefulWidget {
-  const ProductDescriptionpage({Key? key}) : super(key: key);
+  String? name;
+
+  ProductDescriptionpage({required this.name});
 
   @override
   State<ProductDescriptionpage> createState() => _ProductDescriptionpageState();
@@ -23,10 +18,10 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
   void initState() {
     super.initState();
     _getPetsInfo();
+    _findPetsListIndex();
   }
 
   void _getPetsInfo() async {
-    int i = 0;
     await for (var snapshot in _firestore.collection('pets').snapshots()) {
       for (var pet in snapshot.docs) {
         final petData = pet.data();
@@ -40,6 +35,20 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
         petsInfo['Owner'] = petData['Owner'].toString();
         petsInfo['Location'] = petData['Location'].toString();
         _petsList.add(petsInfo!);
+      }
+    }
+  }
+
+  Future<int?> _findPetsListIndex() async {
+    int i = 0;
+    await for (var snapshot in _firestore.collection('pets').snapshots()) {
+      for (var pet in snapshot.docs) {
+        final petData = pet.data();
+        Map<String, String>? petsInfo = {};
+        if (petData['Name'].toString() == widget.name) {
+          return i;
+        }
+        i++;
       }
     }
   }
@@ -143,6 +152,272 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                       ),
                     )
                   ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    top: 14.0,
+                    left: 10,
+                    right: 10,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.baseline,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: [
+                      FutureBuilder<int?>(
+                        future: _findPetsListIndex(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<int?> snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              _petsList[snapshot.data!]['Name'].toString() ??
+                                  '',
+                              style: TextStyle(
+                                fontSize: 23,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error.toString());
+                          } else {
+                            return Text('Loading...');
+                          }
+                        },
+                      ),
+                      FutureBuilder<int?>(
+                        future: _findPetsListIndex(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<int?> snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              (_petsList[snapshot.data!]['Price'].toString() ??
+                                      '') +
+                                  ' \$',
+                              style: TextStyle(
+                                  color: Color(0xff17A589),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error.toString());
+                          } else {
+                            return Text('Loading...');
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 10.0, bottom: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        'view location',
+                        style: TextStyle(fontSize: 17),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 104,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: kPurpleColor,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Color(0xff6CCAB7),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FutureBuilder<int?>(
+                                    future: _findPetsListIndex(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<int?> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Text(
+                                          (_petsList[snapshot.data!]['Age']
+                                                      .toString() ??
+                                                  '') +
+                                              ' months',
+                                          style: TextStyle(
+                                              color: Color(0xff282828),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Text(snapshot.error.toString());
+                                      } else {
+                                        return Text('Loading...');
+                                      }
+                                    },
+                                  ),
+                                  Text(
+                                    'Age',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: Color(0xff43A1D7),
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                FutureBuilder<int?>(
+                                  future: _findPetsListIndex(),
+                                  builder: (BuildContext context,
+                                      AsyncSnapshot<int?> snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Text(
+                                        (_petsList[snapshot.data!]['Sex']
+                                                .toString() ??
+                                            ''),
+                                        style: TextStyle(
+                                            color: Color(0xff282828),
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      );
+                                    } else if (snapshot.hasError) {
+                                      return Text(snapshot.error.toString());
+                                    } else {
+                                      return Text('Loading...');
+                                    }
+                                  },
+                                ),
+                                Text(
+                                  'Sex',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                color: Color(0xffF48579),
+                              ),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  FutureBuilder<int?>(
+                                    future: _findPetsListIndex(),
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<int?> snapshot) {
+                                      if (snapshot.hasData) {
+                                        return Text(
+                                          (_petsList[snapshot.data!]['Weight']
+                                                      .toString() ??
+                                                  '') +
+                                              ' Kg',
+                                          style: TextStyle(
+                                              color: Color(0xff282828),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        );
+                                      } else if (snapshot.hasError) {
+                                        return Text(snapshot.error.toString());
+                                      } else {
+                                        return Text('Loading...');
+                                      }
+                                    },
+                                  ),
+                                  Text(
+                                    'Weight',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 14.0, top: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      FutureBuilder<int?>(
+                        future: _findPetsListIndex(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<int?> snapshot) {
+                          if (snapshot.hasData) {
+                            return Text(
+                              ('About ' +
+                                      _petsList[snapshot.data!]['Name']
+                                          .toString() ??
+                                  ''),
+                              style: TextStyle(
+                                  color: Color(0xff282828),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold),
+                            );
+                          } else if (snapshot.hasError) {
+                            return Text(snapshot.error.toString());
+                          } else {
+                            return Text('Loading...');
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+                FutureBuilder<int?>(
+                  future: _findPetsListIndex(),
+                  builder:
+                      (BuildContext context, AsyncSnapshot<int?> snapshot) {
+                    if (snapshot.hasData) {
+                      return Text(
+                        (_petsList[snapshot.data!]['Age'].toString() ?? '') +
+                            ' months',
+                        style: TextStyle(
+                            color: Color(0xff282828),
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text(snapshot.error.toString());
+                    } else {
+                      return Text('Loading...');
+                    }
+                  },
                 ),
               ],
             ),

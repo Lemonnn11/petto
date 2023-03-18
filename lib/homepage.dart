@@ -49,7 +49,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _getPetsInfo() async {
-    int i = 0;
     await for (var snapshot in _firestore.collection('pets').snapshots()) {
       for (var pet in snapshot.docs) {
         final petData = pet.data();
