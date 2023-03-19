@@ -562,13 +562,18 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Expanded(
-                                child: ReusableSmallCard(
-                                  title: 'Cats',
-                                  color: kGreenColor,
-                                  icon: Icon(
-                                    FontAwesomeIcons.cat,
-                                    size: 20,
-                                    color: Colors.grey.shade800,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/catlist');
+                                  },
+                                  child: ReusableSmallCard(
+                                    title: 'Cats',
+                                    color: kGreenColor,
+                                    icon: Icon(
+                                      FontAwesomeIcons.cat,
+                                      size: 20,
+                                      color: Colors.grey.shade800,
+                                    ),
                                   ),
                                 ),
                               ),
