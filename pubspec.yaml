@@ -44,6 +44,7 @@ dependencies:
   google_sign_in: ^6.0.2
   firebase_storage: ^11.0.16
   firebase_app_check: ^0.1.1+14
+  google_maps_flutter: ^2.2.5
 
 
 dev_dependencies:
