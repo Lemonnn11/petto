@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:petto/owner_map.dart';
 import 'constants.dart';
 import 'package:ionicons/ionicons.dart';
 
@@ -209,20 +210,30 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, bottom: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                        'view location',
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.grey[700],
-                          decoration: TextDecoration.underline,
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => OwnerMap(name: widget.name),
                       ),
-                    ],
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 10.0, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          'view location',
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.grey[700],
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Container(

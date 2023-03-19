@@ -10,6 +10,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'reusable_bottom_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'reusable_bottom_navigation_bar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -709,56 +710,7 @@ class _HomePageState extends State<HomePage> {
           onPressed: () {},
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        bottomNavigationBar: BottomAppBar(
-          notchMargin: 5,
-          shape: CircularNotchedRectangle(),
-          color: kPurpleColor,
-          child: Container(
-            height: 65,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 170,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/home');
-                        },
-                        child: BottomIcon(
-                          icon: Ionicons.home_outline,
-                          label: 'Home',
-                        ),
-                      ),
-                      BottomIcon(
-                        icon: Ionicons.heart_outline,
-                        label: 'Wish List',
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  width: 170,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: [
-                      BottomIcon(
-                        icon: Ionicons.chatbubble_ellipses_outline,
-                        label: 'Chat',
-                      ),
-                      BottomIcon(
-                        icon: Ionicons.settings_outline,
-                        label: 'Setting',
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+        bottomNavigationBar: ReusableBottomNavigationBar(),
       ),
     );
   }
