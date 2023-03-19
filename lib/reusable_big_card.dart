@@ -34,6 +34,10 @@ class ReusableBigCard extends StatelessWidget {
           color: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
+            side: BorderSide(
+              color: kPurpleColor,
+              width: 1.5,
+            )
           ),
           child: Padding(
             padding: const EdgeInsets.only(left: 9, right: 9, bottom: 9),

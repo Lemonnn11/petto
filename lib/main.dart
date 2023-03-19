@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:petto/catlist.dart';
 import 'product_description.dart';
 import 'registration.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         '/home': (context) => Home(),
         '/registration': (context) => Registration(),
         '/login': (context) => Login(),
+        '/catlist': (context) => CatList(),
       },
     );
   }
