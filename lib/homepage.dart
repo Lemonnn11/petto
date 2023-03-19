@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
@@ -9,7 +10,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'reusable_bottom_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -81,30 +81,6 @@ class _HomePageState extends State<HomePage> {
           final userName = userData['name'];
           usersInfo![userEmail.toString()] = userName.toString();
         });
-      }
-    }
-  }
-
-  Future<void> getImgURLFromDog(String imgName) async {
-    if (imgName != null) {
-      try {
-        final urlReference =
-            firebaseStorage.child('Dogs').child('${imgName}.png');
-        imgURL = await urlReference.getDownloadURL();
-      } catch (e) {
-        print(e);
-      }
-    }
-  }
-
-  Future<void> getImgURLFromCat(String imgName) async {
-    if (imgName != null) {
-      try {
-        final urlReference =
-            firebaseStorage.child('Cats').child('${imgName}.png');
-        imgURL = await urlReference.getDownloadURL();
-      } catch (e) {
-        print(e);
       }
     }
   }
