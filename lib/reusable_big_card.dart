@@ -3,13 +3,13 @@ import 'package:petto/product_description.dart';
 import 'constants.dart';
 
 class ReusableBigCard extends StatelessWidget {
-  final String imagePath;
+  final Widget image;
   final String name;
   final String location;
   final String price;
 
   ReusableBigCard(
-      {required this.imagePath,
+      {required this.image,
       required this.name,
       required this.location,
       required this.price});
@@ -57,7 +57,7 @@ class ReusableBigCard extends StatelessWidget {
                       child: Container(
                         width: 280,
                         height: 280,
-                        child: Image.asset(imagePath),
+                        child: image,
                       ),
                     ),
                   ],

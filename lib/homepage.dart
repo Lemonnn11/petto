@@ -9,6 +9,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'reusable_bottom_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -27,6 +28,8 @@ class _HomePageState extends State<HomePage> {
   List<Map<String, String>> _petsList = [];
   final GoogleSignIn googleSignIn = GoogleSignIn();
   bool checkType = false;
+  final Reference firebaseStorage = FirebaseStorage.instance.ref();
+  String? imgURL;
 
   void initState() {
     super.initState();
@@ -51,17 +54,20 @@ class _HomePageState extends State<HomePage> {
   void _getPetsInfo() async {
     await for (var snapshot in _firestore.collection('pets').snapshots()) {
       for (var pet in snapshot.docs) {
-        final petData = pet.data();
-        Map<String, String>? petsInfo = {};
-        petsInfo['Name'] = petData['Name'].toString();
-        petsInfo['About'] = petData['About'].toString();
-        petsInfo['Sex'] = petData['Sex'].toString();
-        petsInfo['Age'] = petData['Age'].toString();
-        petsInfo['Weight'] = petData['Weight'].toString();
-        petsInfo['Price'] = petData['Price'].toString();
-        petsInfo['Owner'] = petData['Owner'].toString();
-        petsInfo['Location'] = petData['Location'].toString();
-        _petsList.add(petsInfo!);
+        setState(() {
+          final petData = pet.data();
+          Map<String, String>? petsInfo = {};
+          petsInfo['Name'] = petData['Name'].toString();
+          petsInfo['About'] = petData['About'].toString();
+          petsInfo['Sex'] = petData['Sex'].toString();
+          petsInfo['Age'] = petData['Age'].toString();
+          petsInfo['Weight'] = petData['Weight'].toString();
+          petsInfo['Price'] = petData['Price'].toString();
+          petsInfo['Owner'] = petData['Owner'].toString();
+          petsInfo['Location'] = petData['Location'].toString();
+          petsInfo['Type'] = petData['Type'].toString();
+          _petsList.add(petsInfo!);
+        });
       }
     }
   }
@@ -76,6 +82,60 @@ class _HomePageState extends State<HomePage> {
           usersInfo![userEmail.toString()] = userName.toString();
         });
       }
+    }
+  }
+
+  Future<void> getImgURLFromDog(String imgName) async {
+    if (imgName != null) {
+      try {
+        final urlReference =
+            firebaseStorage.child('Dogs').child('${imgName}.png');
+        imgURL = await urlReference.getDownloadURL();
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
+  Future<void> getImgURLFromCat(String imgName) async {
+    if (imgName != null) {
+      try {
+        final urlReference =
+            firebaseStorage.child('Cats').child('${imgName}.png');
+        imgURL = await urlReference.getDownloadURL();
+      } catch (e) {
+        print(e);
+      }
+    }
+  }
+
+  Future<String?> getImageData(String type, String imgName) async {
+    try {
+      if (type == 'Cat') {
+        if (imgName != null) {
+          try {
+            final urlReference =
+                firebaseStorage.child('Cats').child('${imgName}.png');
+            imgURL = await urlReference.getDownloadURL();
+            return imgURL.toString();
+          } catch (e) {
+            print(e);
+          }
+        }
+      } else if (type == 'Dog') {
+        if (imgName != null) {
+          try {
+            final urlReference =
+                firebaseStorage.child('Dogs').child('${imgName}.png');
+            imgURL = await urlReference.getDownloadURL();
+            return imgURL.toString();
+          } catch (e) {
+            print(e);
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -632,7 +692,21 @@ class _HomePageState extends State<HomePage> {
                     itemCount: _petsList.length,
                     itemBuilder: (_, index) {
                       return ReusableBigCard(
-                        imagePath: 'images/dog1.png',
+                        image: FutureBuilder<String?>(
+                          future: getImageData(
+                              _petsList[index]['Type'].toString(),
+                              _petsList[index]['Name'].toString()),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.hasData) {
+                              return Image.network(snapshot.data.toString());
+                            } else if (snapshot.hasError) {
+                              return Text(snapshot.error.toString());
+                            } else {
+                              return Text('Loading...');
+                            }
+                          },
+                        ),
                         name: _petsList[index]['Name'].toString(),
                         location: _petsList[index]['Location'].toString(),
                         price: _petsList[index]['Price'].toString(),
