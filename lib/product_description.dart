@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:petto/owner_map.dart';
 import 'constants.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class ProductDescriptionpage extends StatefulWidget {
   String? name;
@@ -16,6 +17,8 @@ class ProductDescriptionpage extends StatefulWidget {
 class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
   List<Map<String, String>> _petsList = [];
   final _firestore = FirebaseFirestore.instance;
+  final Reference firebaseStorage = FirebaseStorage.instance.ref();
+  String? imgURL;
 
   void initState() {
     super.initState();
@@ -46,12 +49,41 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
     await for (var snapshot in _firestore.collection('pets').snapshots()) {
       for (var pet in snapshot.docs) {
         final petData = pet.data();
-        Map<String, String>? petsInfo = {};
         if (petData['Name'].toString() == widget.name) {
           return i;
         }
         i++;
       }
+    }
+  }
+
+  Future<String?> getImageData(String type, String imgName) async {
+    try {
+      if (type == 'Cat') {
+        if (imgName != null) {
+          try {
+            final urlReference =
+                firebaseStorage.child('Cats').child('${imgName}.png');
+            imgURL = await urlReference.getDownloadURL();
+            return imgURL.toString();
+          } catch (e) {
+            print(e);
+          }
+        }
+      } else if (type == 'Dog') {
+        if (imgName != null) {
+          try {
+            final urlReference =
+                firebaseStorage.child('Dogs').child('${imgName}.png');
+            imgURL = await urlReference.getDownloadURL();
+            return imgURL.toString();
+          } catch (e) {
+            print(e);
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -139,20 +171,29 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    Positioned(
-                      top: -30,
-                      left: 20,
-                      child: Container(
-                        width: 290,
-                        height: 290,
-                        child: Image(
-                          image: AssetImage(
-                            'images/dog2.png',
-                          ),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    )
+                    // Positioned(
+                    //   top: -30,
+                    //   left: 20,
+                    //   child: Container(
+                    //     width: 290,
+                    //     height: 290,
+                    //     child: FutureBuilder<String?>(
+                    //       future: getImageData(
+                    //           _petsList[index]['Type'].toString(),
+                    //           _petsList[index]['Name'].toString()),
+                    //       builder: (BuildContext context,
+                    //           AsyncSnapshot<String?> snapshot) {
+                    //         if (snapshot.hasData) {
+                    //           return Image.network(snapshot.data.toString(), fit: BoxFit.cover,);
+                    //         } else if (snapshot.hasError) {
+                    //           return Text(snapshot.error.toString());
+                    //         } else {
+                    //           return Text('Loading...');
+                    //         }
+                    //       },
+                    //     ),
+                    //   ),
+                    // )
                   ],
                 ),
                 Padding(

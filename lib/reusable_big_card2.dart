@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:petto/product_description.dart';
 import 'constants.dart';
 
-class ReusableBigCard extends StatelessWidget {
+class ReusableBigCard2 extends StatelessWidget {
   final Widget image;
   final String name;
   final String location;
   final String price;
 
-  ReusableBigCard(
+  ReusableBigCard2(
       {required this.image,
       required this.name,
       required this.location,
@@ -26,10 +26,6 @@ class ReusableBigCard extends StatelessWidget {
         );
       },
       child: Container(
-        margin: EdgeInsets.only(
-          right: 7,
-          left: 2,
-        ),
         child: Card(
           color: Colors.white,
           shape: RoundedRectangleBorder(
@@ -47,7 +43,7 @@ class ReusableBigCard extends StatelessWidget {
                   children: [
                     Container(
                       margin: EdgeInsets.only(top: 9),
-                      width: 155,
+                      width: MediaQuery.of(context).size.width,
                       height: 115,
                       decoration: BoxDecoration(
                         color: kYellowColor,
@@ -82,6 +78,7 @@ class ReusableBigCard extends StatelessWidget {
                 Container(
                   margin: EdgeInsets.only(left: 7, top: 6),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         '${price}\$',
@@ -89,7 +86,6 @@ class ReusableBigCard extends StatelessWidget {
                             color: Color(0xff17A589),
                             fontWeight: FontWeight.bold),
                       ),
-                      SizedBox(width: 50),
                       Text(
                         'View detail',
                         style: TextStyle(

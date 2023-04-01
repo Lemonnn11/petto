@@ -551,13 +551,18 @@ class _HomePageState extends State<HomePage> {
                           child: Row(
                             children: [
                               Expanded(
-                                child: ReusableSmallCard(
-                                  title: 'Dog',
-                                  color: kYellowColor,
-                                  icon: Icon(
-                                    FontAwesomeIcons.dog,
-                                    size: 20,
-                                    color: Colors.grey.shade800,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(context, '/catlist');
+                                  },
+                                  child: ReusableSmallCard(
+                                    title: 'Dog',
+                                    color: kYellowColor,
+                                    icon: Icon(
+                                      FontAwesomeIcons.dog,
+                                      size: 20,
+                                      color: Colors.grey.shade800,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -596,18 +601,13 @@ class _HomePageState extends State<HomePage> {
                                 ),
                               ),
                               Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, '/catlist');
-                                  },
-                                  child: ReusableSmallCard(
-                                    title: 'Cats Stuffs',
-                                    color: kRedColor,
-                                    icon: Icon(
-                                      FontAwesomeIcons.fishFins,
-                                      size: 20,
-                                      color: Colors.grey.shade800,
-                                    ),
+                                child: ReusableSmallCard(
+                                  title: 'Cats Stuffs',
+                                  color: kRedColor,
+                                  icon: Icon(
+                                    FontAwesomeIcons.fishFins,
+                                    size: 20,
+                                    color: Colors.grey.shade800,
                                   ),
                                 ),
                               ),
