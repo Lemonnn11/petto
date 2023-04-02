@@ -15,31 +15,59 @@ class ProductDescriptionpage extends StatefulWidget {
 }
 
 class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
+  List<Map<String, String>> _petList = [];
   List<Map<String, String>> _petsList = [];
   final _firestore = FirebaseFirestore.instance;
   final Reference firebaseStorage = FirebaseStorage.instance.ref();
   String? imgURL;
+  Map<String, String>? petInfo = {};
 
   void initState() {
     super.initState();
     _getPetsInfo();
+    _getSinglePetInfo();
     _findPetsListIndex();
   }
 
   void _getPetsInfo() async {
     await for (var snapshot in _firestore.collection('pets').snapshots()) {
       for (var pet in snapshot.docs) {
+        setState(() {
+          final petData = pet.data();
+          Map<String, String>? petsInfo = {};
+          petsInfo['Name'] = petData['Name'].toString();
+          petsInfo['About'] = petData['About'].toString();
+          petsInfo['Sex'] = petData['Sex'].toString();
+          petsInfo['Age'] = petData['Age'].toString();
+          petsInfo['Weight'] = petData['Weight'].toString();
+          petsInfo['Price'] = petData['Price'].toString();
+          petsInfo['Owner'] = petData['Owner'].toString();
+          petsInfo['Location'] = petData['Location'].toString();
+          petsInfo['Type'] = petData['Type'].toString();
+          _petsList.add(petsInfo!);
+        });
+      }
+    }
+  }
+
+  void _getSinglePetInfo() async {
+    await for (var snapshot in _firestore.collection('pets').snapshots()) {
+      for (var pet in snapshot.docs) {
         final petData = pet.data();
-        Map<String, String>? petsInfo = {};
-        petsInfo['Name'] = petData['Name'].toString();
-        petsInfo['About'] = petData['About'].toString();
-        petsInfo['Sex'] = petData['Sex'].toString();
-        petsInfo['Age'] = petData['Age'].toString();
-        petsInfo['Weight'] = petData['Weight'].toString();
-        petsInfo['Price'] = petData['Price'].toString();
-        petsInfo['Owner'] = petData['Owner'].toString();
-        petsInfo['Location'] = petData['Location'].toString();
-        _petsList.add(petsInfo!);
+        if (petData['Name'].toString() == widget.name) {
+          setState(() {
+            petInfo!['Name'] = petData['Name'].toString();
+            petInfo!['About'] = petData['About'].toString();
+            petInfo!['Sex'] = petData['Sex'].toString();
+            petInfo!['Age'] = petData['Age'].toString();
+            petInfo!['Weight'] = petData['Weight'].toString();
+            petInfo!['Price'] = petData['Price'].toString();
+            petInfo!['Owner'] = petData['Owner'].toString();
+            petInfo!['Location'] = petData['Location'].toString();
+            petInfo!['Type'] = petData['Type'].toString();
+            _petList.add(petInfo!);
+          });
+        }
       }
     }
   }
@@ -171,29 +199,30 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
-                    // Positioned(
-                    //   top: -30,
-                    //   left: 20,
-                    //   child: Container(
-                    //     width: 290,
-                    //     height: 290,
-                    //     child: FutureBuilder<String?>(
-                    //       future: getImageData(
-                    //           _petsList[index]['Type'].toString(),
-                    //           _petsList[index]['Name'].toString()),
-                    //       builder: (BuildContext context,
-                    //           AsyncSnapshot<String?> snapshot) {
-                    //         if (snapshot.hasData) {
-                    //           return Image.network(snapshot.data.toString(), fit: BoxFit.cover,);
-                    //         } else if (snapshot.hasError) {
-                    //           return Text(snapshot.error.toString());
-                    //         } else {
-                    //           return Text('Loading...');
-                    //         }
-                    //       },
-                    //     ),
-                    //   ),
-                    // )
+                    Positioned(
+                      top: -15,
+                      left: 20,
+                      child: Container(
+                        width: 310,
+                        height: 340,
+                        child: FutureBuilder<String?>(
+                          future: getImageData(petInfo!['Type'].toString(),
+                              petInfo!['Name'].toString()),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<String?> snapshot) {
+                            if (snapshot.hasData) {
+                              return Image.network(
+                                snapshot.data.toString(),
+                              );
+                            } else if (snapshot.hasError) {
+                              return Text(snapshot.error.toString());
+                            } else {
+                              return Text('Loading...');
+                            }
+                          },
+                        ),
+                      ),
+                    )
                   ],
                 ),
                 Padding(
