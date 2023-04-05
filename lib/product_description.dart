@@ -32,20 +32,18 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
   void _getPetsInfo() async {
     await for (var snapshot in _firestore.collection('pets').snapshots()) {
       for (var pet in snapshot.docs) {
-        setState(() {
-          final petData = pet.data();
-          Map<String, String>? petsInfo = {};
-          petsInfo['Name'] = petData['Name'].toString();
-          petsInfo['About'] = petData['About'].toString();
-          petsInfo['Sex'] = petData['Sex'].toString();
-          petsInfo['Age'] = petData['Age'].toString();
-          petsInfo['Weight'] = petData['Weight'].toString();
-          petsInfo['Price'] = petData['Price'].toString();
-          petsInfo['Owner'] = petData['Owner'].toString();
-          petsInfo['Location'] = petData['Location'].toString();
-          petsInfo['Type'] = petData['Type'].toString();
-          _petsList.add(petsInfo!);
-        });
+        final petData = pet.data();
+        Map<String, String>? petsInfo = {};
+        petsInfo['Name'] = petData['Name'].toString();
+        petsInfo['About'] = petData['About'].toString();
+        petsInfo['Sex'] = petData['Sex'].toString();
+        petsInfo['Age'] = petData['Age'].toString();
+        petsInfo['Weight'] = petData['Weight'].toString();
+        petsInfo['Price'] = petData['Price'].toString();
+        petsInfo['Owner'] = petData['Owner'].toString();
+        petsInfo['Location'] = petData['Location'].toString();
+        petsInfo['Type'] = petData['Type'].toString();
+        _petsList.add(petsInfo!);
       }
     }
   }
