@@ -88,7 +88,17 @@ class _CatListState extends State<CatList> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
-            color: Colors.white,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                kGradientYellow,
+                Colors.white,
+                Colors.white,
+                Colors.white,
+                Colors.white,
+                kGradientYellow,
+              ], begin: Alignment.topLeft, end: Alignment.bottomRight),
+              color: Colors.white,
+            ),
             child: Column(
               children: [
                 Padding(
@@ -165,8 +175,8 @@ class _CatListState extends State<CatList> {
                       child: Text(
                         'Cat Category',
                         style: TextStyle(
-                            fontSize: 23,
-                            color: kPurpleColor,
+                            fontSize: 20,
+                            color: Color(0xff8E44AD),
                             fontWeight: FontWeight.w900),
                       ),
                     )
@@ -181,7 +191,7 @@ class _CatListState extends State<CatList> {
                         crossAxisCount: 2,
                         crossAxisSpacing: 2.0,
                         mainAxisSpacing: 2.0,
-                        mainAxisExtent: 228),
+                        mainAxisExtent: 236),
                     itemCount: _catsList.length,
                     itemBuilder: (_, index) {
                       return ReusableBigCard2(

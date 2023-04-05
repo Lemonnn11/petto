@@ -5,6 +5,7 @@ import 'constants.dart';
 class ReusableBigCard2 extends StatelessWidget {
   final Widget image;
   final String name;
+  static int color = 0;
   final String location;
   final String price;
 
@@ -13,6 +14,23 @@ class ReusableBigCard2 extends StatelessWidget {
       required this.name,
       required this.location,
       required this.price});
+
+  Color getColor() {
+    int color = ReusableBigCard2.color % 4;
+    if (color == 0) {
+      ReusableBigCard2.color += 1;
+      return kYellowColor;
+    } else if (color == 1) {
+      ReusableBigCard2.color += 1;
+      return kBlueColor;
+    } else if (color == 2) {
+      ReusableBigCard2.color += 1;
+      return kRedColor;
+    } else {
+      ReusableBigCard2.color += 1;
+      return Colors.teal;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +64,7 @@ class ReusableBigCard2 extends StatelessWidget {
                       width: MediaQuery.of(context).size.width,
                       height: 115,
                       decoration: BoxDecoration(
-                        color: kYellowColor,
+                        color: getColor(),
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),

@@ -1,7 +1,5 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:geolocator/geolocator.dart';
 import 'constants.dart';
 
 class OwnerMap extends StatefulWidget {
@@ -99,6 +97,7 @@ class _OwnerMapState extends State<OwnerMap> {
             child: FloatingActionButton(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
+              heroTag: 'zoomIn',
               onPressed: () {
                 _controller!.animateCamera(CameraUpdate.zoomIn());
               },
@@ -111,6 +110,7 @@ class _OwnerMapState extends State<OwnerMap> {
             child: FloatingActionButton(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
+              heroTag: 'zoomOut',
               onPressed: () {
                 _controller!.animateCamera(CameraUpdate.zoomOut());
               },
@@ -123,6 +123,7 @@ class _OwnerMapState extends State<OwnerMap> {
             child: FloatingActionButton(
               backgroundColor: Colors.white,
               foregroundColor: Colors.black,
+              heroTag: 'center',
               onPressed: () {
                 _controller!.animateCamera(
                   CameraUpdate.newCameraPosition(pos),

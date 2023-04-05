@@ -31,6 +31,7 @@ class _HomePageState extends State<HomePage> {
   bool checkType = false;
   final Reference firebaseStorage = FirebaseStorage.instance.ref();
   String? imgURL;
+  bool isGoogleSignIn = false;
 
   void initState() {
     super.initState();
@@ -41,10 +42,16 @@ class _HomePageState extends State<HomePage> {
   Future<String?> _getCurrentUser() async {
     try {
       final user = await _auth.currentUser;
+      final username = user?.displayName;
       if (user != null) {
-        loggedInUser = user;
-        print(loggedInUser?.email);
-        return loggedInUser?.email;
+        if (username == null) {
+          loggedInUser = user;
+          return loggedInUser?.email;
+        } else {
+          isGoogleSignIn = true;
+          final fname = user?.displayName?.split(' ');
+          return fname![0];
+        }
       }
     } catch (e) {
       print(e);
@@ -130,13 +137,13 @@ class _HomePageState extends State<HomePage> {
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-                    Color(0xffdcefeb),
-                    Color(0xffdcefeb),
+                    kGradientGreen,
+                    kGradientGreen,
                     Colors.white,
                     Colors.white,
                     Colors.white,
                     Colors.white,
-                    Color(0x66FFB392),
+                    kGradientOrange,
                   ], begin: Alignment.topLeft, end: Alignment.bottomRight),
                 ),
                 child: Column(
@@ -199,14 +206,23 @@ class _HomePageState extends State<HomePage> {
                                                 AsyncSnapshot<String?>
                                                     snapshot) {
                                               if (snapshot.hasData) {
-                                                loggedInUser =
-                                                    _auth.currentUser;
-                                                return Text(
-                                                  usersInfo?[snapshot.data!] ??
-                                                      '',
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                );
+                                                if (isGoogleSignIn) {
+                                                  return Text(
+                                                    snapshot.data! ?? '',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  );
+                                                } else {
+                                                  loggedInUser =
+                                                      _auth.currentUser;
+                                                  return Text(
+                                                    usersInfo?[
+                                                            snapshot.data!] ??
+                                                        '',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  );
+                                                }
                                               } else if (snapshot.hasError) {
                                                 return Text(
                                                     snapshot.error.toString());
@@ -315,14 +331,23 @@ class _HomePageState extends State<HomePage> {
                                                 AsyncSnapshot<String?>
                                                     snapshot) {
                                               if (snapshot.hasData) {
-                                                loggedInUser =
-                                                    _auth.currentUser;
-                                                return Text(
-                                                  usersInfo?[snapshot.data!] ??
-                                                      '',
-                                                  style:
-                                                      TextStyle(fontSize: 18),
-                                                );
+                                                if (isGoogleSignIn) {
+                                                  return Text(
+                                                    snapshot.data! ?? '',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  );
+                                                } else {
+                                                  loggedInUser =
+                                                      _auth.currentUser;
+                                                  return Text(
+                                                    usersInfo?[
+                                                            snapshot.data!] ??
+                                                        '',
+                                                    style:
+                                                        TextStyle(fontSize: 18),
+                                                  );
+                                                }
                                               } else if (snapshot.hasError) {
                                                 return Text(
                                                     snapshot.error.toString());
@@ -515,11 +540,11 @@ class _HomePageState extends State<HomePage> {
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-                    Color(0x66FFB392),
+                    kGradientOrange,
                     Colors.white,
                     Colors.white,
                     Colors.white,
-                    Color(0x6688CFFF),
+                    kGradientBlue,
                   ], begin: Alignment.topRight, end: Alignment.bottomLeft),
                 ),
                 child: Column(
@@ -637,11 +662,16 @@ class _HomePageState extends State<HomePage> {
                         SizedBox(
                           width: 60,
                         ),
-                        Text(
-                          'view more',
-                          style: TextStyle(
-                              decoration: TextDecoration.underline,
-                              color: Colors.grey.shade600),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pushNamed(context, '/petslist');
+                          },
+                          child: Text(
+                            'view more',
+                            style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                color: Colors.grey.shade600),
+                          ),
                         ),
                       ],
                     ),
@@ -652,10 +682,10 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Container(
-                height: 220,
+                height: 236,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(colors: [
-                    Color(0x6688CFFF),
+                    Color(0x3388CFFF),
                     Colors.white,
                     Colors.white,
                     Colors.white,

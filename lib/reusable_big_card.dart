@@ -73,23 +73,33 @@ class ReusableBigCard extends StatelessWidget {
                   ),
                 ),
                 Container(
+                  width: 148,
                   margin: EdgeInsets.only(left: 7),
                   child: Text(
                     location,
                     style: TextStyle(fontSize: 13, color: Colors.grey.shade800),
+                    softWrap: true,
                   ),
                 ),
                 Container(
+                  width: 145,
                   margin: EdgeInsets.only(left: 7, top: 6),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        '${price}\$',
-                        style: TextStyle(
-                            color: Color(0xff17A589),
-                            fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(width: 50),
+                      price == 'Free'
+                          ? Text(
+                              '${price}',
+                              style: TextStyle(
+                                  color: Color(0xff17A589),
+                                  fontWeight: FontWeight.bold),
+                            )
+                          : Text(
+                              '${price}\$',
+                              style: TextStyle(
+                                  color: Color(0xff17A589),
+                                  fontWeight: FontWeight.bold),
+                            ),
                       Text(
                         'View detail',
                         style: TextStyle(

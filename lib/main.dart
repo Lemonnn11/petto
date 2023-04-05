@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:petto/catlist.dart';
+import 'package:petto/petslist.dart';
 import 'product_description.dart';
 import 'registration.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
         '/registration': (context) => Registration(),
         '/login': (context) => Login(),
         '/catlist': (context) => CatList(),
+        '/petslist': (context) => PetsList(),
       },
     );
   }
