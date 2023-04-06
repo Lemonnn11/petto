@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'constants.dart';
+import 'log_event.dart';
 
 class Registration extends StatefulWidget {
   @override
@@ -279,6 +280,11 @@ class _RegistrationState extends State<Registration> {
                                         .createUserWithEmailAndPassword(
                                             email: _email, password: _password);
                                     if (newUser != null) {
+                                      LogEvent log = LogEvent();
+                                      log.setAction(
+                                          'Signed in by email&password');
+                                      log.setUserEmail(_email);
+                                      log.addLog();
                                       Navigator.pushNamed(context, '/home');
                                     }
                                   } else {}

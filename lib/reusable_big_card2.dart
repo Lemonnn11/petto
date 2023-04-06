@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:petto/product_description.dart';
 import 'constants.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'log_event.dart';
 
 class ReusableBigCard2 extends StatelessWidget {
   final Widget image;
@@ -8,12 +10,27 @@ class ReusableBigCard2 extends StatelessWidget {
   static int color = 0;
   final String location;
   final String price;
+  final _auth = FirebaseAuth.instance;
+  User? loggedInUser;
 
   ReusableBigCard2(
       {required this.image,
       required this.name,
       required this.location,
       required this.price});
+
+  Future<String?> _getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 
   Color getColor() {
     int color = ReusableBigCard2.color % 4;
@@ -35,7 +52,12 @@ class ReusableBigCard2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
+        LogEvent log = LogEvent();
+        log.setAction('Look up pet named ${name}');
+        final userEmail = await _getCurrentUser();
+        log.setUserEmail(userEmail.toString());
+        log.addLog();
         Navigator.push(
           context,
           MaterialPageRoute(

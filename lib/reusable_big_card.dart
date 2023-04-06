@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:petto/product_description.dart';
 import 'constants.dart';
+import 'log_event.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ReusableBigCard extends StatelessWidget {
   final Widget image;
   final String name;
   final String location;
   final String price;
+  final _auth = FirebaseAuth.instance;
+  User? loggedInUser;
 
   ReusableBigCard(
       {required this.image,
@@ -14,10 +18,37 @@ class ReusableBigCard extends StatelessWidget {
       required this.location,
       required this.price});
 
+  Future<String?> _getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      // onTap: () async{
+      //   LogEvent log = LogEvent();
+      //   log.setAction(
+      //       'Look up all pets list');
+      //   final userEmail = await _getCurrentUser();
+      //   log.setUserEmail(userEmail.toString());
+      //   log.addLog();
+      //   Navigator.pushNamed(context, '/petslist');
+      // },
+      onTap: () async {
+        LogEvent log = LogEvent();
+        log.setAction('Look up pet named ${name}');
+        final userEmail = await _getCurrentUser();
+        log.setUserEmail(userEmail.toString());
+        log.addLog();
         Navigator.push(
           context,
           MaterialPageRoute(

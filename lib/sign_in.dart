@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:petto/constants.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'constants.dart';
+import 'log_event.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -11,8 +12,22 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   final _auth = FirebaseAuth.instance;
+  User? loggedInUser;
   String _email = '';
   String _password = '';
+
+  Future<String?> _getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -249,6 +264,12 @@ class _LoginState extends State<Login> {
                                           email: _email, password: _password);
                                   print(user);
                                   if (user != null) {
+                                    LogEvent log = LogEvent();
+                                    log.setAction(
+                                        'Signed in by email&password');
+                                    final userEmail = await _getCurrentUser();
+                                    log.setUserEmail(userEmail.toString());
+                                    log.addLog();
                                     Navigator.pushNamed(context, '/home');
                                   }
                                 } catch (e) {
@@ -344,6 +365,11 @@ class _LoginState extends State<Login> {
                                   .signInWithCredential(credential);
 
                               if (userCredential != null) {
+                                LogEvent log = LogEvent();
+                                log.setAction('Signed in by google');
+                                final userEmail = await _getCurrentUser();
+                                log.setUserEmail(userEmail.toString());
+                                log.addLog();
                                 Navigator.pushNamed(context, '/home');
                               }
                             },

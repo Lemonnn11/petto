@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:petto/product_description.dart';
+import 'log_event.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ReusableLongCard extends StatefulWidget {
   final Widget image;
@@ -23,6 +25,22 @@ class ReusableLongCard extends StatefulWidget {
 }
 
 class _ReusableLongCardState extends State<ReusableLongCard> {
+  final _auth = FirebaseAuth.instance;
+  User? loggedInUser;
+
+  Future<String?> _getCurrentUser() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   Color getColor() {
     int color = ReusableLongCard.color % 4;
     if (color == 0) {
@@ -47,7 +65,12 @@ class _ReusableLongCardState extends State<ReusableLongCard> {
         Positioned(
           top: 18,
           child: GestureDetector(
-            onTap: () {
+            onTap: () async {
+              LogEvent log = LogEvent();
+              log.setAction('Look up pet named ${widget.name}');
+              final userEmail = await _getCurrentUser();
+              log.setUserEmail(userEmail.toString());
+              log.addLog();
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -156,7 +179,12 @@ class _ReusableLongCardState extends State<ReusableLongCard> {
           ),
         ),
         GestureDetector(
-          onTap: () {
+          onTap: () async {
+            LogEvent log = LogEvent();
+            log.setAction('Look up pet named ${widget.name}');
+            final userEmail = await _getCurrentUser();
+            log.setUserEmail(userEmail.toString());
+            log.addLog();
             Navigator.push(
               context,
               MaterialPageRoute(

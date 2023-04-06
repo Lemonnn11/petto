@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'reusable_side_bar_tab.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'log_event.dart';
 
 class SideBar extends StatefulWidget {
   const SideBar({Key? key}) : super(key: key);
@@ -195,6 +196,11 @@ class _SideBarState extends State<SideBar> {
                 } else {
                   await _auth.signOut();
                 }
+                LogEvent log = LogEvent();
+                log.setAction('Signed out');
+                final userEmail = await _getCurrentUser();
+                log.setUserEmail(userEmail.toString());
+                log.addLog();
                 Navigator.pushNamed(context, '/login');
               },
               child: ReusableSideBarTab(

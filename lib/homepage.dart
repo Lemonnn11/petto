@@ -11,6 +11,7 @@ import 'reusable_bottom_icon.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'reusable_bottom_navigation_bar.dart';
+import 'log_event.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -37,6 +38,19 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     _getPetsInfo();
     _getUsersInfo();
+  }
+
+  Future<String?> _getCurrentUserEmail() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 
   Future<String?> _getCurrentUser() async {
@@ -493,29 +507,39 @@ class _HomePageState extends State<HomePage> {
                         Positioned(
                           top: 138,
                           left: 39,
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 15,
-                                vertical: 7,
+                          child: GestureDetector(
+                            onTap: () async {
+                              LogEvent log = LogEvent();
+                              log.setAction('Look up all pets list');
+                              final userEmail = await _getCurrentUserEmail();
+                              log.setUserEmail(userEmail.toString());
+                              log.addLog();
+                              Navigator.pushNamed(context, '/petslist');
+                            },
+                            child: Container(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 15,
+                                  vertical: 7,
+                                ),
+                                child: Text(
+                                  'Find Now!',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 16.5),
+                                ),
                               ),
-                              child: Text(
-                                'Find Now!',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 16.5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.25),
+                                    spreadRadius: 1,
+                                    blurRadius: 1,
+                                  )
+                                ],
                               ),
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.white,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.25),
-                                  spreadRadius: 1,
-                                  blurRadius: 1,
-                                )
-                              ],
                             ),
                           ),
                         ),
@@ -661,7 +685,12 @@ class _HomePageState extends State<HomePage> {
                           width: 60,
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
+                            LogEvent log = LogEvent();
+                            log.setAction('Look up all pets list');
+                            final userEmail = await _getCurrentUserEmail();
+                            log.setUserEmail(userEmail.toString());
+                            log.addLog();
                             Navigator.pushNamed(context, '/petslist');
                           },
                           child: Text(

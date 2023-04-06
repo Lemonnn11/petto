@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:petto/owner_map.dart';
 import 'constants.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+
+import 'log_event.dart';
 
 class ProductDescriptionpage extends StatefulWidget {
   String? name;
@@ -20,6 +23,8 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
   final _firestore = FirebaseFirestore.instance;
   final Reference firebaseStorage = FirebaseStorage.instance.ref();
   String? imgURL;
+  final _auth = FirebaseAuth.instance;
+  User? loggedInUser;
   Map<String, String>? petInfo = {};
 
   void initState() {
@@ -27,6 +32,19 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
     _getPetsInfo();
     _getSinglePetInfo();
     _findPetsListIndex();
+  }
+
+  Future<String?> _getCurrentUserEmail() async {
+    try {
+      final user = await _auth.currentUser;
+      if (user != null) {
+        loggedInUser = user;
+        return loggedInUser?.email;
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
   }
 
   void _getPetsInfo() async {
@@ -279,7 +297,12 @@ class _ProductDescriptionpageState extends State<ProductDescriptionpage> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
+                  onTap: () async {
+                    LogEvent log = LogEvent();
+                    log.setAction('Look at ${widget.name}\'s location');
+                    final userEmail = await _getCurrentUserEmail();
+                    log.setUserEmail(userEmail.toString());
+                    log.addLog();
                     Navigator.push(
                       context,
                       MaterialPageRoute(
