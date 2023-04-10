@@ -36,14 +36,14 @@ class _RegistrationState extends State<Registration> {
   }
 
   bool isAllValid() {
-    print('not match ' + _showPwNotmatch.toString());
-    print('invalid username ' + _showInvalidUsername.toString());
-    print('invalid email ' + _showInvalidEmail.toString());
-    print('null username ' + _showNullUsername.toString());
-    print('null email ' + _showNullEmail.toString());
-    print('null pw ' + _showNullPw.toString());
-    print('null cpw ' + _showNullCPw.toString());
-    print('checked ' + _isChecked.toString());
+    // print('not match ' + _showPwNotmatch.toString());
+    // print('invalid username ' + _showInvalidUsername.toString());
+    // print('invalid email ' + _showInvalidEmail.toString());
+    // print('null username ' + _showNullUsername.toString());
+    // print('null email ' + _showNullEmail.toString());
+    // print('null pw ' + _showNullPw.toString());
+    // print('null cpw ' + _showNullCPw.toString());
+    // print('checked ' + _isChecked.toString());
     if (!_showPwNotmatch &&
         !_showInvalidUsername &&
         !_showNullUsername &&
@@ -82,21 +82,24 @@ class _RegistrationState extends State<Registration> {
   }
 
   void _isUsernameExistt(String name) {
+    _isUsernameExist = false;
+    // print(_usersList);
+    // print('name: ' + name);
     for (var user in _usersList) {
+      // print(user['name']);
+      // print('name: ' + name);
       if (user['name'] == name) {
-        setState(() {
-          _isUsernameExist = true;
-        });
+        _isUsernameExist = true;
       }
     }
+    // print('isExist: ' + _isUsernameExist.toString().toString());
   }
 
   void _isEmailExistt(String email) {
+    _isUsernameExist = false;
     for (var user in _usersList) {
       if (user['email'] == email) {
-        setState(() {
-          _isEmailExist = true;
-        });
+        _isEmailExist = true;
       }
     }
   }
@@ -244,17 +247,24 @@ class _RegistrationState extends State<Registration> {
                                   ),
                                   onChanged: (value) {
                                     _name = value;
-
+                                    _isUsernameExistt(_name);
+                                    print('exist: ' +
+                                        _isUsernameExist.toString());
                                     setState(() {
-                                      _isUsernameExistt(_name);
                                       if (_name == '') {
                                         _showNullUsername = true;
-                                      }
-                                      if (!alphanumeric.hasMatch(value)) {
-                                        _showInvalidUsername = true;
                                       } else {
-                                        _showInvalidUsername = false;
+                                        _showNullUsername = false;
+                                        if (!alphanumeric.hasMatch(value)) {
+                                          _showInvalidUsername = true;
+                                        } else {
+                                          _showInvalidUsername = false;
+                                        }
                                       }
+                                      print('null: ' +
+                                          _showNullUsername.toString());
+                                      print('valid: ' +
+                                          _showInvalidUsername.toString());
                                     });
                                   },
                                 ),
@@ -304,15 +314,17 @@ class _RegistrationState extends State<Registration> {
                                   ),
                                   onChanged: (value) {
                                     _email = value;
+
                                     setState(() {
-                                      _isEmailExistt(_email);
                                       if (_email == '') {
                                         _showNullEmail = true;
-                                      }
-                                      if (!emailic.hasMatch(value)) {
-                                        _showInvalidEmail = true;
                                       } else {
-                                        _showInvalidEmail = false;
+                                        _isEmailExistt(_email);
+                                        if (!emailic.hasMatch(value)) {
+                                          _showInvalidEmail = true;
+                                        } else {
+                                          _showInvalidEmail = false;
+                                        }
                                       }
                                     });
                                   },
