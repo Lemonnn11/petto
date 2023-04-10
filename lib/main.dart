@@ -5,6 +5,7 @@ import 'product_description.dart';
 import 'registration.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:petto/sign_in.dart';
+import 'package:petto/doglist.dart';
 import 'home.dart';
 
 void main() async {
@@ -31,6 +32,7 @@ class MyApp extends StatelessWidget {
         '/registration': (context) => Registration(),
         '/login': (context) => Login(),
         '/catlist': (context) => CatList(),
+        '/doglist': (context) => DogList(),
         '/petslist': (context) => PetsList(),
       },
     );

@@ -599,8 +599,14 @@ class _HomePageState extends State<HomePage> {
                             children: [
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(context, '/catlist');
+                                  onTap: () async {
+                                    LogEvent log = LogEvent();
+                                    log.setAction('Look up dogs list');
+                                    final userEmail =
+                                        await _getCurrentUserEmail();
+                                    log.setUserEmail(userEmail.toString());
+                                    log.addLog();
+                                    Navigator.pushNamed(context, '/doglist');
                                   },
                                   child: ReusableSmallCard(
                                     title: 'Dog',
@@ -615,7 +621,13 @@ class _HomePageState extends State<HomePage> {
                               ),
                               Expanded(
                                 child: GestureDetector(
-                                  onTap: () {
+                                  onTap: () async {
+                                    LogEvent log = LogEvent();
+                                    log.setAction('Look up cats list');
+                                    final userEmail =
+                                        await _getCurrentUserEmail();
+                                    log.setUserEmail(userEmail.toString());
+                                    log.addLog();
                                     Navigator.pushNamed(context, '/catlist');
                                   },
                                   child: ReusableSmallCard(

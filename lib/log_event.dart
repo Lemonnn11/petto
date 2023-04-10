@@ -19,10 +19,12 @@ class LogEvent {
 
   void addLog() {
     logEvent.add(action);
-    print(action);
+    showLogs();
   }
 
   void showLogs() {
-    print(logEvent);
+    for (action in logEvent) {
+      print(action);
+    }
   }
 }

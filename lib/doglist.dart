@@ -6,16 +6,16 @@ import 'package:petto/reusable_bottom_navigation_bar.dart';
 import 'constants.dart';
 import 'reusable_big_card2.dart';
 
-class CatList extends StatefulWidget {
-  const CatList({Key? key}) : super(key: key);
+class DogList extends StatefulWidget {
+  const DogList({Key? key}) : super(key: key);
 
   @override
-  State<CatList> createState() => _CatListState();
+  State<DogList> createState() => _DogListState();
 }
 
-class _CatListState extends State<CatList> {
+class _DogListState extends State<DogList> {
   final Reference firebaseStorage = FirebaseStorage.instance.ref();
-  List<Map<String, String>> _catsList = [];
+  List<Map<String, String>> _dogsList = [];
   final _firestore = FirebaseFirestore.instance;
   String? imgURL;
 
@@ -39,8 +39,8 @@ class _CatListState extends State<CatList> {
         petsInfo['Location'] = petData['Location'].toString();
         petsInfo['Type'] = petData['Type'].toString();
         setState(() {
-          if (petData['Type'].toString() == 'Cat') {
-            _catsList.add(petsInfo);
+          if (petData['Type'].toString() == 'Dog') {
+            _dogsList.add(petsInfo);
           }
         });
       }
@@ -52,7 +52,7 @@ class _CatListState extends State<CatList> {
       if (imgName != null) {
         try {
           final urlReference =
-              firebaseStorage.child('Cats').child('${imgName}.png');
+              firebaseStorage.child('Dogs').child('${imgName}.png');
           imgURL = await urlReference.getDownloadURL();
           return imgURL.toString();
         } catch (e) {
@@ -174,12 +174,12 @@ class _CatListState extends State<CatList> {
                         crossAxisSpacing: 2.0,
                         mainAxisSpacing: 2.0,
                         mainAxisExtent: 236),
-                    itemCount: _catsList.length,
+                    itemCount: _dogsList.length,
                     itemBuilder: (_, index) {
                       return ReusableBigCard2(
                         image: FutureBuilder<String?>(
                           future:
-                              getImageData(_catsList[index]['Name'].toString()),
+                              getImageData(_dogsList[index]['Name'].toString()),
                           builder: (BuildContext context,
                               AsyncSnapshot<String?> snapshot) {
                             if (snapshot.hasData) {
@@ -191,9 +191,9 @@ class _CatListState extends State<CatList> {
                             }
                           },
                         ),
-                        name: _catsList[index]['Name'].toString(),
-                        location: _catsList[index]['Location'].toString(),
-                        price: _catsList[index]['Price'].toString(),
+                        name: _dogsList[index]['Name'].toString(),
+                        location: _dogsList[index]['Location'].toString(),
+                        price: _dogsList[index]['Price'].toString(),
                       );
                     },
                   ),
