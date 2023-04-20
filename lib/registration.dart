@@ -23,9 +23,9 @@ class _RegistrationState extends State<Registration> {
   bool _showNullEmail = false;
   bool _showNullPw = false;
   bool _showNullCPw = false;
-  bool? _isChecked;
-  bool? _isUsernameExist = false;
-  bool? _isEmailExist = false;
+  bool? _isChecked = false;
+  bool _isUsernameExist = false;
+  bool _isEmailExist = false;
   List<Map<String, String>> _usersList = [];
   final RegExp alphanumeric = RegExp(r'^[a-zA-Z0-9]+$');
   final RegExp emailic = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$");
@@ -96,7 +96,7 @@ class _RegistrationState extends State<Registration> {
   }
 
   void _isEmailExistt(String email) {
-    _isUsernameExist = false;
+    _isEmailExist = false;
     for (var user in _usersList) {
       if (user['email'] == email) {
         _isEmailExist = true;
@@ -137,7 +137,7 @@ class _RegistrationState extends State<Registration> {
                       ),
                     ),
                     Positioned(
-                      top: 115,
+                      top: 120,
                       left: (MediaQuery.of(context).size.width / 2) - 110,
                       child: Text(
                         'Create an account',
@@ -148,7 +148,7 @@ class _RegistrationState extends State<Registration> {
                       ),
                     ),
                     Positioned(
-                      top: 143,
+                      top: 149,
                       left: (MediaQuery.of(context).size.width / 2) - 142,
                       child: Text(
                         'Join to find your suitable buddy here!',
@@ -220,11 +220,11 @@ class _RegistrationState extends State<Registration> {
                                   keyboardType: TextInputType.name,
                                   decoration: InputDecoration(
                                     errorText: _showInvalidUsername
-                                        ? 'Username can contain only a-z and No.'
+                                        ? 'should contain only A-Z, a-z and No.'
                                         : _showNullUsername
                                             ? 'Please fill in username'
                                             : _isUsernameExist!
-                                                ? 'Username is taken, Try again'
+                                                ? 'Username is taken, Please try again'
                                                 : null,
                                     border: _showInvalidUsername
                                         ? OutlineInputBorder(
@@ -248,23 +248,18 @@ class _RegistrationState extends State<Registration> {
                                   onChanged: (value) {
                                     _name = value;
                                     _isUsernameExistt(_name);
-                                    print('exist: ' +
-                                        _isUsernameExist.toString());
                                     setState(() {
                                       if (_name == '') {
                                         _showNullUsername = true;
+                                        _showInvalidUsername = false;
                                       } else {
-                                        _showNullUsername = false;
                                         if (!alphanumeric.hasMatch(value)) {
                                           _showInvalidUsername = true;
                                         } else {
                                           _showInvalidUsername = false;
+                                          _showNullUsername = false;
                                         }
                                       }
-                                      print('null: ' +
-                                          _showNullUsername.toString());
-                                      print('valid: ' +
-                                          _showInvalidUsername.toString());
                                     });
                                   },
                                 ),
@@ -287,11 +282,11 @@ class _RegistrationState extends State<Registration> {
                                   keyboardType: TextInputType.emailAddress,
                                   decoration: InputDecoration(
                                     errorText: _showInvalidEmail
-                                        ? 'Please fill in email address'
+                                        ? 'Please fill in an email address'
                                         : _showNullEmail
                                             ? 'Please fill in email'
                                             : _isEmailExist!
-                                                ? 'Email is taken, Try again'
+                                                ? 'Email is taken, Please try again'
                                                 : null,
                                     border: _showInvalidEmail
                                         ? OutlineInputBorder(
@@ -314,16 +309,17 @@ class _RegistrationState extends State<Registration> {
                                   ),
                                   onChanged: (value) {
                                     _email = value;
-
+                                    _isEmailExistt(_email);
                                     setState(() {
                                       if (_email == '') {
                                         _showNullEmail = true;
+                                        _showInvalidEmail = true;
                                       } else {
-                                        _isEmailExistt(_email);
                                         if (!emailic.hasMatch(value)) {
                                           _showInvalidEmail = true;
                                         } else {
                                           _showInvalidEmail = false;
+                                          _showNullEmail = false;
                                         }
                                       }
                                     });
@@ -364,6 +360,8 @@ class _RegistrationState extends State<Registration> {
                                     setState(() {
                                       if (_password == '') {
                                         _showNullPw = true;
+                                      } else {
+                                        _showNullPw = false;
                                       }
                                     });
                                   },
@@ -429,11 +427,13 @@ class _RegistrationState extends State<Registration> {
                                     setState(() {
                                       if (_cpassword == '') {
                                         _showNullCPw = true;
+                                        _showPwNotmatch = true;
                                       }
                                       if (_password != value) {
                                         _showPwNotmatch = true;
                                       } else {
                                         _showPwNotmatch = false;
+                                        _showNullCPw = false;
                                       }
                                     });
                                   },
@@ -442,10 +442,11 @@ class _RegistrationState extends State<Registration> {
                               Row(
                                 children: [
                                   Checkbox(
-                                    value: _isChecked ?? false,
+                                    value: _isChecked,
                                     onChanged: (bool? value) {
                                       setState(() {
                                         _isChecked = value;
+                                        print(_isChecked);
                                       });
                                     },
                                     activeColor: kPurpleColor,
@@ -455,10 +456,26 @@ class _RegistrationState extends State<Registration> {
                                   ),
                                   Column(
                                     children: [
-                                      Text(
-                                        'I agree to Petto\'s Terms of Service\n and Privacy Policy',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
+                                      _isChecked!
+                                          ? Text(
+                                              'I agree to Petto\'s Terms of Service\n and Privacy Policy',
+                                              style: TextStyle(fontSize: 14),
+                                            )
+                                          : Row(
+                                              children: [
+                                                Text(
+                                                  'I agree to Petto\'s Terms of Service\n and Privacy Policy',
+                                                  style:
+                                                      TextStyle(fontSize: 14),
+                                                ),
+                                                Text(
+                                                  '*',
+                                                  style: TextStyle(
+                                                      fontSize: 27,
+                                                      color: Colors.red),
+                                                )
+                                              ],
+                                            ),
                                     ],
                                   ),
                                 ],

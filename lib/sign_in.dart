@@ -15,6 +15,11 @@ class _LoginState extends State<Login> {
   User? loggedInUser;
   String _email = '';
   String _password = '';
+  bool _showInvalidEmail = false;
+  bool _showNullEmail = false;
+  bool _showNullPw = false;
+  bool _showIncorrectEmorPw = false;
+  final RegExp emailic = RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9.]+\.[a-zA-Z]{2,}$");
 
   Future<String?> _getCurrentUser() async {
     try {
@@ -57,7 +62,7 @@ class _LoginState extends State<Login> {
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight),
                         ),
-                        height: 200,
+                        height: 180,
                         width: 200,
                       ),
                       Positioned(
@@ -75,17 +80,17 @@ class _LoginState extends State<Login> {
                                 begin: Alignment.topRight,
                                 end: Alignment.bottomLeft),
                           ),
-                          height: 200,
+                          height: 180,
                           width: 200,
                         ),
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: 200,
+                        height: 180,
                       ),
                       Positioned(
-                        top: 30,
-                        left: ((MediaQuery.of(context).size.width) / 2) - 40,
+                        top: 20,
+                        left: ((MediaQuery.of(context).size.width) / 2) - 44,
                         child: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(30),
@@ -102,8 +107,8 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       Positioned(
-                        top: 122,
-                        left: ((MediaQuery.of(context).size.width) / 2) - 72,
+                        top: 112,
+                        left: ((MediaQuery.of(context).size.width) / 2) - 76,
                         child: Row(
                           children: [
                             Text(
@@ -112,7 +117,7 @@ class _LoginState extends State<Login> {
                                   fontWeight: FontWeight.bold, fontSize: 24),
                             ),
                             SizedBox(
-                              width: 9,
+                              width: 8,
                             ),
                             Text(
                               'Buddy!',
@@ -125,8 +130,8 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                       Positioned(
-                        top: 155,
-                        left: ((MediaQuery.of(context).size.width) / 2) - 61,
+                        top: 142,
+                        left: ((MediaQuery.of(context).size.width) / 2) - 64,
                         child: Text(
                           'Sign in to Petto',
                           style: TextStyle(fontSize: 17),
@@ -161,7 +166,7 @@ class _LoginState extends State<Login> {
                   ),
                   Container(
                     width: 356,
-                    height: 395,
+                    height: 415,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
                       border: Border.all(
@@ -171,7 +176,7 @@ class _LoginState extends State<Login> {
                     ),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 22, horizontal: 25),
+                          vertical: 20, horizontal: 25),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -207,18 +212,47 @@ class _LoginState extends State<Login> {
                           ),
                           Container(
                             width: 300,
-                            height: 46,
+                            height: 70,
                             child: TextField(
                               keyboardType: TextInputType.emailAddress,
                               decoration: InputDecoration(
+                                border: _showInvalidEmail
+                                    ? OutlineInputBorder(
+                                        borderSide: BorderSide(
+                                          color: Colors.red,
+                                          width: 1.5,
+                                        ),
+                                        borderRadius: BorderRadius.circular(14),
+                                      )
+                                    : OutlineInputBorder(
+                                        borderSide: BorderSide.none,
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                errorText: _showInvalidEmail
+                                    ? 'Please fill in an email address'
+                                    : _showNullEmail
+                                        ? 'Please fill in email'
+                                        : null,
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
                                 filled: true,
                                 fillColor: Color(0xffECECEC),
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none,
-                                    borderRadius: BorderRadius.circular(14)),
                               ),
                               onChanged: (value) {
                                 _email = value;
+                                setState(() {
+                                  if (_email == '') {
+                                    _showNullEmail = true;
+                                    _showInvalidEmail = false;
+                                  } else {
+                                    if (!emailic.hasMatch(value)) {
+                                      _showInvalidEmail = true;
+                                    } else {
+                                      _showInvalidEmail = false;
+                                      _showNullEmail = false;
+                                    }
+                                  }
+                                });
                               },
                             ),
                           ),
@@ -235,10 +269,17 @@ class _LoginState extends State<Login> {
                           ),
                           Container(
                             width: 300,
-                            height: 46,
+                            height: 70,
                             child: TextField(
                               obscureText: true,
                               decoration: InputDecoration(
+                                errorText: _showNullPw
+                                    ? 'Please fill in password'
+                                    : _showIncorrectEmorPw
+                                        ? 'incorrect email or password'
+                                        : null,
+                                contentPadding:
+                                    EdgeInsets.symmetric(horizontal: 20),
                                 filled: true,
                                 fillColor: Color(0xffECECEC),
                                 border: OutlineInputBorder(
@@ -251,29 +292,50 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           SizedBox(
-                            height: 30,
+                            height: 7,
                           ),
                           Container(
                             width: 300,
                             height: 46,
                             child: ElevatedButton(
                               onPressed: () async {
-                                try {
-                                  final user =
-                                      await _auth.signInWithEmailAndPassword(
-                                          email: _email, password: _password);
-                                  print(user);
-                                  if (user != null) {
-                                    LogEvent log = LogEvent();
-                                    log.setAction(
-                                        'Signed in by email&password');
-                                    final userEmail = await _getCurrentUser();
-                                    log.setUserEmail(userEmail.toString());
-                                    log.addLog();
-                                    Navigator.pushNamed(context, '/home');
+                                if (_email == '' && _password == '') {
+                                  setState(() {
+                                    _showNullEmail = true;
+                                    _showNullPw = true;
+                                  });
+                                } else if (_email == '' || _password == '') {
+                                  if (_email == '') {
+                                    setState(() {
+                                      _showNullEmail = true;
+                                    });
                                   }
-                                } catch (e) {
-                                  print(e);
+                                  if (_password == '') {
+                                    setState(() {
+                                      _showNullPw = true;
+                                    });
+                                  }
+                                } else {
+                                  try {
+                                    final user =
+                                        await _auth.signInWithEmailAndPassword(
+                                            email: _email, password: _password);
+                                    if (user != null) {
+                                      LogEvent log = LogEvent();
+                                      log.setAction(
+                                          'Signed in by email&password');
+                                      final userEmail = await _getCurrentUser();
+                                      log.setUserEmail(userEmail.toString());
+                                      log.addLog();
+                                      Navigator.pushNamed(context, '/home');
+                                    }
+                                  } catch (e) {
+                                    print(e);
+                                    setState(() {
+                                      _showIncorrectEmorPw = true;
+                                      _showNullPw = false;
+                                    });
+                                  }
                                 }
                               },
                               style: ButtonStyle(
@@ -293,7 +355,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(top: 13.0),
+                            padding: const EdgeInsets.only(top: 11.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
